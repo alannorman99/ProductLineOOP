@@ -11,7 +11,7 @@ public class Controller {
 
     @FXML
     void onAddProductPress(ActionEvent event) {
-    System.out.println("Product added");
+        System.out.println("Product added");
     }
 
 }
