@@ -21,45 +21,81 @@ import javax.swing.DefaultComboBoxModel;
 
 /**
  * A class used to execute function within the GUI, such as Button press and inserting values to a
- * Database.
+ * Database. 9/28/2019
  *
  * @author Alan Norman
  */
 public class Controller {
 
+  /**
+   * labels quantity comboBox.
+   */
   @FXML
   private Label lblChooseQuantity;
 
+  /**
+   * Labels the ListView that displays all the products selected.
+   */
   @FXML
   private Label lblChooseProduct;
 
+  /**
+   * The individual Product Line Tab in the GUI.
+   */
   @FXML
   private Tab tabProductLine;
 
+  /**
+   * The individual Produce Tab in the GUI.
+   */
   @FXML
   private Tab tabProduce;
 
+  /**
+   * The individual Production Log Tab in the GUI.
+   */
   @FXML
   private Tab tabProductionLog;
 
+  /**
+   * Button that initiates producing a list of records based on the quantity selected.
+   */
   @FXML
   private Button btnRecordProduction;
 
+  /**
+   * Where the user enters the name of the product being entered.
+   */
   @FXML
   private TextField txtfProductName;
 
+  /**
+   * Where the user enters the manufacturer of the product being added.
+   */
   @FXML
   private TextField txtfManufacturer;
 
+  /**
+   * ChoiceBox for the specific item type being added.
+   */
   @FXML
   private ChoiceBox<?> cbItemType;
 
+  /**
+   * The comboBox for the quantity of products, contains values 1-10.
+   */
   @FXML
   private ComboBox<String> cmBoxQuantity;
 
+  /**
+   * Global variables for the database connection and statement.
+   */
   private Connection conn = null;
   private Statement stmt = null;
 
+  /**
+   * initiates adding a product to the database.
+   */
   @FXML
   private Button btnAddProduct;
 
@@ -84,6 +120,14 @@ public class Controller {
    * Creates a connection to the database.
    */
   private void initializeDB() {
+
+    /*
+     Title: DataBase Week 5
+     Author: Scott Vanselow
+     Date: 2019
+     Code version: 1.0
+     Availability: https://sites.google.com/site/profvanselow/course/cop-3003/4-Databases?authuser=0
+ */
 
     //Driver and Location of Database
     final String Jdbc_Driver = "org.h2.Driver";
@@ -132,6 +176,14 @@ public class Controller {
     try {
       //uses the connection from initializeDB to create a statement
       stmt = conn.createStatement();
+
+      /*
+     Title: OOP Project
+     Author: Scott Vanselow
+     Date: 2019
+     Code version: 1.0
+     Availability: https://sites.google.com/site/profvanselow/course/cop-3003/oop-project?authuser=0
+ */
 
       //SQL statement used to access database
       String sql = "INSERT INTO Product(type, manufacturer, name) "

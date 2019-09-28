@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Main class used to set up the stage and load the FXML.
+ * Main class used to set up the stage and load the FXML. 9/28/2019 Resources:
  *
  * @author Alan Norman
  */
