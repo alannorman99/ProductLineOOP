@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javax.swing.DefaultComboBoxModel;
@@ -25,6 +26,21 @@ import javax.swing.DefaultComboBoxModel;
  * @author Alan Norman
  */
 public class Controller {
+
+  @FXML
+  private Label lblChooseQuantity;
+
+  @FXML
+  private Label lblChooseProduct;
+
+  @FXML
+  private Tab tabProductLine;
+
+  @FXML
+  private Tab tabProduce;
+
+  @FXML
+  private Tab tabProductionLog;
 
   @FXML
   private Button btnRecordProduction;

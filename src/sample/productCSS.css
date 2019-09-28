@@ -1,0 +1,38 @@
+.root {
+  -fx-background-color: #00ff00;
+  -fx-border-color: black;
+  -fx-border-width: 5px;
+}
+
+.tab {
+  -fx-padding: 5px,10px,5px,10px;
+}
+.tab .tab-label {
+  -fx-font-weight: bold;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+  -fx-background-color: black;
+
+}
+
+
+.label {
+  -fx-padding: 10px;
+  -fx-font-size: 12px;
+  -fx-font-family: "Times New Roman";
+  -fx-font-weight: bold;
+
+}
+
+#lblChooseProduct {
+  -fx-padding: 0px;
+  -fx-font-size: 18x;
+}
+
+#lblChooseQuantity {
+  -fx-padding: 0px;
+}
+
+
+
