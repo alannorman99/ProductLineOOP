@@ -1,22 +1,31 @@
 package sample;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javax.swing.DefaultComboBoxModel;
 
-
+/**
+ * A class used to execute function within the GUI, such as Button press and inserting values to a
+ * Database.
+ *
+ * @author Alan Norman
+ */
 public class Controller {
 
-  //public Tab tabProduce;
   @FXML
   private Button btnRecordProduction;
 
@@ -32,18 +41,32 @@ public class Controller {
   @FXML
   private ComboBox<String> cmBoxQuantity;
 
-
   private Connection conn = null;
   private Statement stmt = null;
 
   @FXML
   private Button btnAddProduct;
 
+  /**
+   * Method that runs on program startup.
+   */
   public void initialize() {
-    System.out.println("Initialize");
+
+    //clears previous values in comboBox
+    cmBoxQuantity.getItems().clear();
+    //Loops through comboBox and adds values 1 to 10
+    for (int i = 1; i < 11; i++) {
+      cmBoxQuantity.getItems().add(String.valueOf(i));
+    }
+    //Allows the user to enter a values into the comboBox
+    cmBoxQuantity.setEditable(true);
+    //Shows the first values by default on the screen
+    cmBoxQuantity.getSelectionModel().selectFirst();
   }
 
-  //Creates a connection to the database
+  /**
+   * Creates a connection to the database.
+   */
   private void initializeDB() {
 
     //Driver and Location of Database
@@ -68,14 +91,22 @@ public class Controller {
 
   }
 
-  //Used to confirm user input within the Produce Tab
+  /**
+   * Used to confirm user input within the Produce Tab.
+   *
+   * @param event for when the user wants to produce a record log
+   */
   @FXML
   void recordButtonAction(ActionEvent event) {
 
     System.out.println("Record Production");
   }
 
-  //Button used to add a product to the database
+  /**
+   * Button used to add a product to the database.
+   *
+   * @param event happens when the add product button is pressed
+   */
   @FXML
   void onAddProductPress(ActionEvent event) {
 
