@@ -3,6 +3,7 @@ package sample;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
@@ -79,7 +80,7 @@ public class Controller {
    * ChoiceBox for the specific item type being added.
    */
   @FXML
-  private ChoiceBox<?> cbItemType;
+  private ChoiceBox<String> cbItemType;
 
   /**
    * The comboBox for the quantity of products, contains values 1-10.
@@ -103,6 +104,9 @@ public class Controller {
    * Method that runs on program startup.
    */
   public void initialize() {
+
+    //calls initializeDB method
+    initializeDB();
 
     //clears previous values in comboBox
     cmBoxQuantity.getItems().clear();
@@ -170,13 +174,10 @@ public class Controller {
   @FXML
   void onAddProductPress(ActionEvent event) {
 
-    //calls initializeDB method
-    initializeDB();
-
     try {
       //uses the connection from initializeDB to create a statement
-      stmt = conn.createStatement();
 
+      stmt = conn.createStatement();
       /*
      Title: OOP Project
      Author: Scott Vanselow
@@ -185,9 +186,10 @@ public class Controller {
      Availability: https://sites.google.com/site/profvanselow/course/cop-3003/oop-project?authuser=0
  */
 
-      //SQL statement used to access database
+      //SQL statement used to insert textfield values into database
       String sql = "INSERT INTO Product(type, manufacturer, name) "
-          + "VALUES ( 'AUDIO', 'Apple', 'iPod' )";
+          + "VALUES ( '" + txtfProductName.getText() + "', '" + txtfManufacturer.getText() + "', '"
+          + cbItemType.getValue() + "')";
 
       //executes the previous steps
       stmt.executeUpdate(sql);
