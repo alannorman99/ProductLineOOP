@@ -80,7 +80,7 @@ public class Controller {
    * ChoiceBox for the specific item type being added.
    */
   @FXML
-  private ChoiceBox<String> cbItemType;
+  private ChoiceBox<ItemType> cbItemType;
 
   /**
    * The comboBox for the quantity of products, contains values 1-10.
@@ -105,6 +105,9 @@ public class Controller {
    */
   public void initialize() {
 
+    //calls fillItemType method
+    fillItemType();
+
     //calls initializeDB method
     initializeDB();
 
@@ -118,6 +121,15 @@ public class Controller {
     cmBoxQuantity.setEditable(true);
     //Shows the first values by default on the screen
     cmBoxQuantity.getSelectionModel().selectFirst();
+
+  }
+
+  /**
+   * Fills the item type choice box with the ItemType enum values.
+   */
+  private void fillItemType() {
+    cbItemType.getItems()
+        .addAll(ItemType.Audio, ItemType.Visual, ItemType.AudioMobile, ItemType.VideoMobile);
   }
 
   /**
