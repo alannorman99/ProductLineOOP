@@ -5,12 +5,17 @@
  */
 .root {
   -fx-background-color: #00ff00;
+
+}
+
+.tab-pane {
   -fx-border-color: black;
   -fx-border-width: 5px;
 }
 
 .tab {
   -fx-padding: 5px, 10px, 5px, 10px;
+
 }
 
 .tab .tab-label {
@@ -35,6 +40,11 @@
 
 #lblChooseQuantity {
   -fx-padding: 0px;
+}
+
+.choice-box .context-menu {
+  -fx-pref-width: 150px;
+  -fx-alignment: center;
 }
 
 

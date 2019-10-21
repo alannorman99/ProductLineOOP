@@ -17,12 +17,10 @@ public abstract class Product implements Item {
 
   @Override
   public String toString() {
-    return "Product{" +
-        "id=" + id +
-        ", type='" + type + '\'' +
-        ", manufacturer='" + manufacturer + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "Product ID: " + id + "\n" +
+        "Product Name: " + name + "\n" +
+        "Manufacturer: " + manufacturer + "\n" +
+        "Type: " + type + "\n" + "\n";
   }
 
   @Override
@@ -50,6 +48,7 @@ public abstract class Product implements Item {
     return manufacturer;
   }
 }
+
 class Widget extends Product {
 
   public Widget(String type, String manufacturer, String name) {

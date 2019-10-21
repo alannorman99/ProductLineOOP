@@ -4,6 +4,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javax.swing.DefaultComboBoxModel;
 
@@ -30,47 +32,87 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class Controller {
 
-  /** labels quantity comboBox. */
-  @FXML private Label lblChooseQuantity;
+  @FXML
+  private TextArea txtAProductsDisplay;
 
-  /** Labels the ListView that displays all the products selected. */
-  @FXML private Label lblChooseProduct;
+  /**
+   * labels quantity comboBox.
+   */
+  @FXML
+  private Label lblChooseQuantity;
 
-  /** The individual Product Line Tab in the GUI. */
-  @FXML private Tab tabProductLine;
+  /**
+   * Labels the ListView that displays all the products selected.
+   */
+  @FXML
+  private Label lblChooseProduct;
 
-  /** The individual Produce Tab in the GUI. */
-  @FXML private Tab tabProduce;
+  /**
+   * The individual Product Line Tab in the GUI.
+   */
+  @FXML
+  private Tab tabProductLine;
 
-  /** The individual Production Log Tab in the GUI. */
-  @FXML private Tab tabProductionLog;
+  /**
+   * The individual Produce Tab in the GUI.
+   */
+  @FXML
+  private Tab tabProduce;
 
-  /** Button that initiates producing a list of records based on the quantity selected. */
-  @FXML private Button btnRecordProduction;
+  /**
+   * The individual Production Log Tab in the GUI.
+   */
+  @FXML
+  private Tab tabProductionLog;
 
-  /** Where the user enters the name of the product being entered. */
-  @FXML private TextField txtfProductName;
+  /**
+   * Button that initiates producing a list of records based on the quantity selected.
+   */
+  @FXML
+  private Button btnRecordProduction;
 
-  /** Where the user enters the manufacturer of the product being added. */
-  @FXML private TextField txtfManufacturer;
+  /**
+   * Where the user enters the name of the product being entered.
+   */
+  @FXML
+  private TextField txtfProductName;
 
-  /** ChoiceBox for the specific item type being added. */
-  @FXML private ChoiceBox<ItemType> cbItemType;
+  /**
+   * Where the user enters the manufacturer of the product being added.
+   */
+  @FXML
+  private TextField txtfManufacturer;
 
-  /** The comboBox for the quantity of products, contains values 1-10. */
-  @FXML private ComboBox<String> cmBoxQuantity;
+  /**
+   * ChoiceBox for the specific item type being added.
+   */
+  @FXML
+  private ChoiceBox<ItemType> cbItemType;
 
-  /** Global variables for the database connection and statement. */
+  /**
+   * The comboBox for the quantity of products, contains values 1-10.
+   */
+  @FXML
+  private ComboBox<String> cmBoxQuantity;
+
+  /**
+   * Global variables for the database connection and statement.
+   */
   private Connection conn = null;
 
   private Statement stmt = null;
 
   private ArrayList<Widget> products = new ArrayList<Widget>();
 
-  /** initiates adding a product to the database. */
-  @FXML private Button btnAddProduct;
+  /**
+   * initiates adding a product to the database.
+   */
+  @FXML
+  private Button btnAddProduct;
 
-  /** Method that runs on program startup. */
+  /**
+   * Method that runs on program startup.
+   */
   public void initialize() {
 
     // calls fillItemType method
@@ -78,6 +120,13 @@ public class Controller {
 
     // calls initializeDB method
     initializeDB();
+
+    storeProductTextArea();
+
+    for (Widget widget : products) {
+      String temp = widget.toString();
+      txtAProductsDisplay.appendText(temp);
+    }
 
     // clears previous values in comboBox
     cmBoxQuantity.getItems().clear();
@@ -91,14 +140,18 @@ public class Controller {
     cmBoxQuantity.getSelectionModel().selectFirst();
   }
 
-  /** Fills the item type choice box with the ItemType enum values. */
+  /**
+   * Fills the item type choice box with the ItemType enum values.
+   */
   private void fillItemType() {
     cbItemType
         .getItems()
         .addAll(ItemType.Audio, ItemType.Visual, ItemType.AudioMobile, ItemType.VideoMobile);
   }
 
-  /** Creates a connection to the database. */
+  /**
+   * Creates a connection to the database.
+   */
   private void initializeDB() {
 
     /*
@@ -127,6 +180,43 @@ public class Controller {
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
+  }
+
+  private void storeProductTextArea() {
+    try {
+      //Read first names and passwords into result set
+      String sql = ("SELECT * FROM PRODUCT");
+      stmt = conn.createStatement();
+      ResultSet resultSet = stmt.executeQuery(sql);
+
+      //Loop through database and read all the values into accounts
+      while (resultSet.next()) {
+        String productName = resultSet.getString("NAME");
+        String productMan = resultSet.getString("MANUFACTURER");
+        String productType = resultSet.getString("TYPE");
+        Widget tempWidget = new Widget(productName, productMan, productType);
+        products.add(tempWidget);
+      }
+
+      System.out.println("result: " + products.toString());
+      //close the statement and the result set created
+      stmt.close();
+      resultSet.close();
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      if (conn == null) {
+        stmt.close();
+        conn.close();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+
   }
 
   /**
@@ -192,7 +282,7 @@ public class Controller {
 
     // STEP 4: Clean-up environment
     try {
-      if(conn == null) {
+      if (conn == null) {
         stmt.close();
         conn.close();
       }
