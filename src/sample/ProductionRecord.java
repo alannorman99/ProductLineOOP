@@ -16,6 +16,13 @@ public class ProductionRecord {
     this.dateProduced = new Date();
   }
 
+  public ProductionRecord(Product product, int count) {
+
+    this.serialNumber = (product.getManufacturer().substring(0, 3) + product.getType() + String
+        .format("%05d", product.increment()));
+    this.dateProduced = new Date();
+  }
+
   public ProductionRecord(int productionNumber, int productID, String serialNumber,
       Date dateProduced) {
     this.productionNumber = productionNumber;

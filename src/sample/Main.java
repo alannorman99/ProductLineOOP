@@ -22,7 +22,7 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-    primaryStage.setTitle("Hello World");
+    primaryStage.setTitle("Product Line");
     Scene scene = new Scene(root, 500, 500);
     scene.getStylesheets().add(Main.class.getResource("productCSS.css").toExternalForm());
     primaryStage.setScene(scene);

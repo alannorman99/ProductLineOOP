@@ -7,7 +7,7 @@ public class MoviePlayer extends Product implements MultimediaControl {
 
   public MoviePlayer(String manufacturer, String name, String screen,
       MonitorType monitorType) {
-    super("Visual", manufacturer, name);
+    super(ItemType.Visual, manufacturer, name);
     this.screen = screen;
     this.monitorType = monitorType;
   }

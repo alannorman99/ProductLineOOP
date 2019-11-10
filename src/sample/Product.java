@@ -3,24 +3,33 @@ package sample;
 public abstract class Product implements Item {
 
   private int id;
-  private String type;
+  private ItemType type;
+
   private String manufacturer;
   private String name;
 
-  public Product(String type, String manufacturer, String name) {
+
+  /**
+   * Product constructor used by database.
+   * @param type products type
+   * @param manufacturer products manufacturer
+   * @param name products name
+   */
+  public Product(ItemType type, String manufacturer, String name) {
     this.type = type;
     this.manufacturer = manufacturer;
     this.name = name;
   }
 
+
   //Still working on
 
   @Override
   public String toString() {
-    return "Product ID: " + id + "\n" +
-        "Product Name: " + name + "\n" +
-        "Manufacturer: " + manufacturer + "\n" +
-        "Type: " + type + "\n" + "\n";
+    return "Product ID: " + id + "\n"
+        + "Product Name: " + name + "\n"
+        + "Manufacturer: " + manufacturer
+        + "\n" + "Type: " + type + "\n" + "\n";
   }
 
   @Override
@@ -47,11 +56,34 @@ public abstract class Product implements Item {
   public String getManufacturer() {
     return manufacturer;
   }
+
+  public ItemType getType() {
+    return type;
+  }
+
+  public void setType(ItemType type) {
+    this.type = type;
+  }
+
+  private int globalProducts = -1; // Defined outside the scope of the method
+
+  /**
+   * method to increment global products.
+   *
+   * @return adds one to global products
+   */
+
+  public int increment() {
+    globalProducts++; // Increment the value by 1
+    return globalProducts; // Return the value of which you currently hold
+    // return persistedValue++;
+  }
 }
 
 class Widget extends Product {
 
-  public Widget(String type, String manufacturer, String name) {
+  public Widget(String name, String manufacturer, ItemType type) {
     super(type, manufacturer, name);
   }
+
 }

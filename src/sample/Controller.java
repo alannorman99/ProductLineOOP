@@ -1,28 +1,29 @@
 package sample;
 
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ResourceBundle;
+import java.util.Date;
+import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javax.swing.DefaultComboBoxModel;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  * A class used to execute function within the GUI, such as Button press and inserting values to a
@@ -31,6 +32,27 @@ import javax.swing.DefaultComboBoxModel;
  * @author Alan Norman
  */
 public class Controller {
+
+  @FXML
+  private TableView<Widget> tableViewProducts;
+
+  @FXML
+  private TableColumn<?, ?> productIdCol;
+
+  @FXML
+  private TableColumn<?, ?> productNameCol;
+
+  @FXML
+  private TableColumn<?, ?> productManuCol;
+
+  @FXML
+  private TableColumn<?, ?> productTypeCol;
+
+  @FXML
+  private ListView<Widget> produceListView;
+
+  @FXML
+  private TextArea taProductionLog;
 
   @FXML
   private TextArea txtAProductsDisplay;
@@ -93,7 +115,7 @@ public class Controller {
    * The comboBox for the quantity of products, contains values 1-10.
    */
   @FXML
-  private ComboBox<String> cmBoxQuantity;
+  private ComboBox<Integer> cmBoxQuantity;
 
   /**
    * Global variables for the database connection and statement.
@@ -102,7 +124,7 @@ public class Controller {
 
   private Statement stmt = null;
 
-  private ArrayList<Widget> products = new ArrayList<Widget>();
+  private static List<Widget> products = new ArrayList<>();
 
   /**
    * initiates adding a product to the database.
@@ -110,9 +132,13 @@ public class Controller {
   @FXML
   private Button btnAddProduct;
 
+  private static ObservableList<Widget> productLine = FXCollections.observableList(products);
+
+
   /**
    * Method that runs on program startup.
    */
+
   public void initialize() {
 
     // calls fillItemType method
@@ -121,24 +147,31 @@ public class Controller {
     // calls initializeDB method
     initializeDB();
 
+    setupProductLineTable();
+
+    //storeObservableList();
+
     storeProductTextArea();
 
-    for (Widget widget : products) {
+    tableViewProducts.setVisible(true);
+
+    for (Product widget : products) {
       String temp = widget.toString();
-      txtAProductsDisplay.appendText(temp);
+      taProductionLog.appendText(temp);
     }
 
     // clears previous values in comboBox
     cmBoxQuantity.getItems().clear();
     // Loops through comboBox and adds values 1 to 10
     for (int i = 1; i < 11; i++) {
-      cmBoxQuantity.getItems().add(String.valueOf(i));
+      cmBoxQuantity.getItems().add(i);
     }
     // Allows the user to enter a values into the comboBox
     cmBoxQuantity.setEditable(true);
     // Shows the first values by default on the screen
     cmBoxQuantity.getSelectionModel().selectFirst();
   }
+
 
   /**
    * Fills the item type choice box with the ItemType enum values.
@@ -185,17 +218,19 @@ public class Controller {
   private void storeProductTextArea() {
     try {
       //Read first names and passwords into result set
-      String sql = ("SELECT * FROM PRODUCT");
+      String sql = ("SELECT * FROM PRODUCTIONRECORD");
       stmt = conn.createStatement();
       ResultSet resultSet = stmt.executeQuery(sql);
 
       //Loop through database and read all the values into accounts
       while (resultSet.next()) {
-        String productName = resultSet.getString("NAME");
-        String productMan = resultSet.getString("MANUFACTURER");
-        String productType = resultSet.getString("TYPE");
-        Widget tempWidget = new Widget(productName, productMan, productType);
-        products.add(tempWidget);
+        int productNum = resultSet.getInt("PRODUCTION_NUM");
+        int productID = resultSet.getInt("PRODUCT_ID");
+        String productSerialNumber = resultSet.getString("SERIAL_NUM");
+        Date date = resultSet.getDate("DATE_PRODUCED");
+        ProductionRecord record = new ProductionRecord(productNum, productID, productSerialNumber,
+            date);
+        taProductionLog.appendText(record.toString());
       }
 
       System.out.println("result: " + products.toString());
@@ -227,7 +262,12 @@ public class Controller {
   @FXML
   void recordButtonAction(ActionEvent event) {
 
-    System.out.println("Record Production");
+    for (int i = 0; i <= cmBoxQuantity.getSelectionModel().getSelectedIndex(); i++) {
+      Widget item = produceListView.getSelectionModel().getSelectedItem();
+
+      taProductionLog.appendText(item.toString());
+    }
+
   }
 
   /**
@@ -236,7 +276,7 @@ public class Controller {
    * @param event happens when the add product button is pressed
    */
   @FXML
-  void onAddProductPress(ActionEvent event) {
+  public void onAddProductPress(ActionEvent event) {
 
     try {
       // uses the connection from initializeDB to create a statement
@@ -248,18 +288,16 @@ public class Controller {
           Code version: 1.0
           Availability: https://sites.google.com/site/profvanselow/course/cop-3003/oop-project?authuser=0
       */
-      /** Local variables to read the values entered for the product by the user. */
-      String productType = cbItemType.getValue().toString();
+
+      ItemType productType = cbItemType.getValue();
       String productManufacturer = txtfManufacturer.getText();
       String productName = txtfProductName.getText();
 
-      /**
-       * Widget object used to create a product from what the user entered, which will be stored
-       * into the database.
-       */
-      Widget product = new Widget(productType, productManufacturer, productName);
+      Widget product = new Widget(productName, productManufacturer, productType);
 
-      products.add(product);
+      //products.add(product);
+      productLine.add(product);
+      setupProductLineTable();
       System.out.println("Products: " + products.toString());
 
       // SQL statement used to insert textfield values into database
@@ -276,6 +314,7 @@ public class Controller {
       // executes the previous steps
       stmt.executeUpdate(sql);
 
+
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -290,6 +329,24 @@ public class Controller {
       e.printStackTrace();
     }
 
+
+  }
+
+  /*
+        Title: DataBase OOP Project Week 11
+        Author: Scott Vanselow
+        Date: 2019
+        Code version: 1.0
+        Availability: https://github.com/profvanselow/TableViewData/blob/master/src/sample/Controller.java
+    */
+
+  private void setupProductLineTable() {
+    productIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+    productNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+    productManuCol.setCellValueFactory(new PropertyValueFactory<>("manufacturer"));
+    productTypeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+    produceListView.setItems(productLine);
+    tableViewProducts.setItems(productLine);
   }
 
 }
