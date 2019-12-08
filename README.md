@@ -9,7 +9,7 @@ ProductLineOOP
 
 
 ## Documentation
-[Link to Java-Docs](https://alannorman99.github.io/ProductLineOOP/)
+[Link to Java-Docs](docs/index-files)
 
 ## Diagrams
 ![Class Diagram](class.png)
