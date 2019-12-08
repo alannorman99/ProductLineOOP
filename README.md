@@ -12,6 +12,8 @@ ProductLineOOP
 [Link to Java-Docs](https://alannorman99.github.io/ProductLineOOP/)
 
 ## Diagrams
+![Class Diagram](class.jpg)
+![Database Diagram](class.jpg)
 
 
 ## Getting Started
