@@ -9,7 +9,7 @@ ProductLineOOP
 
 
 ## Documentation
-[Link to Java-Docs](file:///C:/Users/alann/OneDrive/OOP%20Class/ProductLineOOPtest/doc/index.html)
+[Link to Java-Docs](https://alannorman99.github.io/ProductLineOOP/)
 
 ## Diagrams
 
