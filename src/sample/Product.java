@@ -11,16 +11,17 @@ public abstract class Product implements Item {
 
   /**
    * Product constructor used by database.
-   * @param type products type
+   *
+   * @param type         products type
    * @param manufacturer products manufacturer
-   * @param name products name
+   * @param name         products name
    */
   public Product(ItemType type, String manufacturer, String name) {
     this.type = type;
     this.manufacturer = manufacturer;
     this.name = name;
+    globalProducts++;
   }
-
 
   //Still working on
 
@@ -73,17 +74,9 @@ public abstract class Product implements Item {
    * @return adds one to global products
    */
 
-  public int increment() {
+  int increment() {
     globalProducts++; // Increment the value by 1
     return globalProducts; // Return the value of which you currently hold
     // return persistedValue++;
   }
-}
-
-class Widget extends Product {
-
-  public Widget(String name, String manufacturer, ItemType type) {
-    super(type, manufacturer, name);
-  }
-
 }

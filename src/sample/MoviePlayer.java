@@ -5,6 +5,13 @@ public class MoviePlayer extends Product implements MultimediaControl {
   private String screen;
   private MonitorType monitorType;
 
+  /**
+   * Standard constructor for a product of type movie player.
+   * @param manufacturer product manufacturer
+   * @param name product name
+   * @param screen screen type
+   * @param monitorType monitor type
+   */
   public MoviePlayer(String manufacturer, String name, String screen,
       MonitorType monitorType) {
     super(ItemType.Visual, manufacturer, name);
@@ -34,8 +41,8 @@ public class MoviePlayer extends Product implements MultimediaControl {
 
   @Override
   public String toString() {
-    return super.toString() + "\n" +
-        "screen: " + screen + "\n" +
-        "monitorType: " + monitorType;
+    return super.toString() + "\n"
+        + "screen: " + screen + "\n"
+        + "monitorType: " + monitorType;
   }
 }

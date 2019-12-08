@@ -1,8 +1,11 @@
 package sample;
 
 public interface ScreenSpec {
-  public String getResolution();
-  public int getRefreshRate();
-  public int getResponseTime();
+
+  String getResolution();
+
+  int getRefreshRate();
+
+  int getResponseTime();
 
 }

@@ -1,13 +1,20 @@
 package sample;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -125,6 +132,7 @@ public class Controller {
   private Statement stmt = null;
 
   private static List<Widget> products = new ArrayList<>();
+  private static ArrayList<ProductionRecord> productionRecords = new ArrayList<>();
 
   /**
    * initiates adding a product to the database.
@@ -150,8 +158,6 @@ public class Controller {
     setupProductLineTable();
 
     //storeObservableList();
-
-    storeProductTextArea();
 
     tableViewProducts.setVisible(true);
 
@@ -201,21 +207,67 @@ public class Controller {
 
     //  Database credentials
     final String User = "";
-    final String Pass = "";
+
+    String pass = "";
+    try {
+      Properties prop = new Properties();
+      prop.load(new FileInputStream("res/properties"));
+      pass = prop.getProperty("password");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    //final String pass = "dbpw";
 
     try {
       // STEP 1: Register JDBC driver
       Class.forName(Jdbc_Driver);
 
       // STEP 2: Open a connection
-      conn = DriverManager.getConnection(Db_Url, User, Pass);
+      conn = DriverManager.getConnection(Db_Url, User, pass);
 
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
   }
 
-  private void storeProductTextArea() {
+  private void addToProductionDB(ArrayList<ProductionRecord> records) {
+
+    for (ProductionRecord record : records) {
+      try {
+        stmt = conn.createStatement();
+
+        String sql =
+            "INSERT INTO ProductionRecord(production_num, product_id, serial_num, date_produced) "
+                + "VALUES ( '" + record.getProductionNumber() + "', '" + record.getProductID()
+                + "', '" + record.getSerialNumber() + "', '"
+                + new Timestamp(record.getDateProduced().getTime()) + "')";
+
+        stmt.executeUpdate(sql);
+
+        System.out.println("result: " + products.toString());
+        //close the statement and the result set created
+        stmt.close();
+
+
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+      try {
+        if (conn == null) {
+          stmt.close();
+          conn.close();
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+
+
+  }
+
+  private void loadProductionLog() {
     try {
       //Read first names and passwords into result set
       String sql = ("SELECT * FROM PRODUCTIONRECORD");
@@ -230,8 +282,11 @@ public class Controller {
         Date date = resultSet.getDate("DATE_PRODUCED");
         ProductionRecord record = new ProductionRecord(productNum, productID, productSerialNumber,
             date);
-        taProductionLog.appendText(record.toString());
+        productionRecords.add(record);
+
       }
+
+      showProduction(productionRecords);
 
       System.out.println("result: " + products.toString());
       //close the statement and the result set created
@@ -251,8 +306,8 @@ public class Controller {
       e.printStackTrace();
     }
 
-
   }
+
 
   /**
    * Used to confirm user input within the Produce Tab.
@@ -261,12 +316,31 @@ public class Controller {
    */
   @FXML
   void recordButtonAction(ActionEvent event) {
+    Widget item = produceListView.getSelectionModel().getSelectedItem();
+    ArrayList<ProductionRecord> productionRun = new ArrayList<>();
 
     for (int i = 0; i <= cmBoxQuantity.getSelectionModel().getSelectedIndex(); i++) {
-      Widget item = produceListView.getSelectionModel().getSelectedItem();
 
-      taProductionLog.appendText(item.toString());
+      ProductionRecord record = new ProductionRecord(item, i);
+      productionRun.add(record);
+
     }
+    addToProductionDB(productionRun);
+    showProduction(productionRun);
+
+  }
+
+  private void showProduction(ArrayList<ProductionRecord> records) {
+    Widget itemSelected = produceListView.getSelectionModel().getSelectedItem();
+
+    for (ProductionRecord record : records) {
+      ProductionRecord tempRecord = new ProductionRecord(record.getProductionNumber(),
+          itemSelected.getName(), record.getSerialNumber(), record.getDateProduced());
+      taProductionLog.appendText(tempRecord.toString());
+
+
+    }
+
 
   }
 
@@ -303,13 +377,8 @@ public class Controller {
       // SQL statement used to insert textfield values into database
       String sql =
           "INSERT INTO Product(type, manufacturer, name) "
-              + "VALUES ( '"
-              + productType
-              + "', '"
-              + product.getManufacturer()
-              + "', '"
-              + product.getName()
-              + "')";
+              + "VALUES ( '" + productType + "', '" + product.getManufacturer() + "', '" + product
+              .getName() + "')";
 
       // executes the previous steps
       stmt.executeUpdate(sql);
