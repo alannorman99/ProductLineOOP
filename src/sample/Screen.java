@@ -2,21 +2,10 @@ package sample;
 
 public class Screen implements ScreenSpec {
 
-  private String resolution;
+  //commenting out to avoid bug
+  /*private String resolution;
   private int refreshrate;
-  private int responsetime;
-
-  /**
-   * Constructor for basic screen.
-   * @param resolution screen resolution
-   * @param refreshrate screen refresh rate
-   * @param responsetime screent response time
-   */
-  public Screen(String resolution, int refreshrate, int responsetime) {
-    this.resolution = resolution;
-    this.refreshrate = refreshrate;
-    this.responsetime = responsetime;
-  }
+  private int responsetime;*/
 
   @Override
   public String getResolution() {

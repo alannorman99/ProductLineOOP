@@ -12,9 +12,11 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Properties;
 
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,12 +27,14 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Duration;
 
 /**
  * A class used to execute function within the GUI, such as Button press and inserting values to a
@@ -124,6 +128,25 @@ public class Controller {
   @FXML
   private ComboBox<Integer> cmBoxQuantity;
 
+  @FXML
+  private TextField employeeNameField;
+
+  @FXML
+  private PasswordField employeePasswordField;
+
+  @FXML
+  private Button createEmployeeButton;
+
+  @FXML
+  private ListView<Employee> employeeListView;
+
+  @FXML
+  private Label addProductLabel;
+
+  @FXML
+  private Label recordProductionLabel;
+
+
   /**
    * Global variables for the database connection and statement.
    */
@@ -132,6 +155,7 @@ public class Controller {
   private Statement stmt = null;
 
   private static List<Widget> products = new ArrayList<>();
+  private static List<Employee> employeeList = new ArrayList<>();
   private static ArrayList<ProductionRecord> productionRecords = new ArrayList<>();
 
   /**
@@ -141,6 +165,13 @@ public class Controller {
   private Button btnAddProduct;
 
   private static ObservableList<Widget> productLine = FXCollections.observableList(products);
+  private static ObservableList<Employee> employeeObservableList = FXCollections
+      .observableList(employeeList);
+
+  private FadeTransition productFadeOut = new FadeTransition(Duration.millis(2000));
+
+  private FadeTransition recordFadeOut = new FadeTransition(Duration.millis(2000));
+
 
 
   /**
@@ -149,11 +180,29 @@ public class Controller {
 
   public void initialize() {
 
+    addProductLabel.setVisible(false);
+    productFadeOut.setNode(addProductLabel);
+    productFadeOut.setFromValue(1.0);
+    productFadeOut.setToValue(0.0);
+    productFadeOut.setCycleCount(1);
+    productFadeOut.setAutoReverse(false);
+
+    recordProductionLabel.setVisible(false);
+    recordFadeOut.setNode(recordProductionLabel);
+    recordFadeOut.setFromValue(1.0);
+    recordFadeOut.setToValue(0.0);
+    recordFadeOut.setCycleCount(1);
+    recordFadeOut.setAutoReverse(false);
+
+    //loadProductionLog();
+
     // calls fillItemType method
     fillItemType();
 
     // calls initializeDB method
     initializeDB();
+
+    loadProductionLog();
 
     setupProductLineTable();
 
@@ -231,11 +280,25 @@ public class Controller {
     }
   }
 
+  @FXML
+  void createEmployee(ActionEvent event) {
+    String name = employeeNameField.getText();
+    String password = employeeNameField.getText();
+
+    Employee employee = new Employee(name, password);
+    employeeList.add(employee);
+
+    employeeListView.setItems(employeeObservableList);
+  }
+
   private void addToProductionDB(ArrayList<ProductionRecord> records) {
 
     for (ProductionRecord record : records) {
       try {
-        stmt = conn.createStatement();
+
+
+
+       stmt = conn.createStatement();
 
         String sql =
             "INSERT INTO ProductionRecord(production_num, product_id, serial_num, date_produced) "
@@ -254,19 +317,12 @@ public class Controller {
         e.printStackTrace();
       }
 
-      try {
-        if (conn == null) {
-          stmt.close();
-          conn.close();
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
     }
 
 
   }
 
+  //should load elements of database into arraylist but is giving a null pointer.
   private void loadProductionLog() {
     try {
       //Read first names and passwords into result set
@@ -283,25 +339,19 @@ public class Controller {
         ProductionRecord record = new ProductionRecord(productNum, productID, productSerialNumber,
             date);
         productionRecords.add(record);
-
       }
 
-      showProduction(productionRecords);
+      //loads the 3 most recent records
+      //Should only load in the previous 3 from DB but can't figure that out
+      for (int i = 0; i < 3; i++) {
+        taProductionLog.appendText(productionRecords.get(i).toString());
+      }
 
       System.out.println("result: " + products.toString());
       //close the statement and the result set created
       stmt.close();
       resultSet.close();
 
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      if (conn == null) {
-        stmt.close();
-        conn.close();
-      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -319,24 +369,33 @@ public class Controller {
     Widget item = produceListView.getSelectionModel().getSelectedItem();
     ArrayList<ProductionRecord> productionRun = new ArrayList<>();
 
-    for (int i = 0; i <= cmBoxQuantity.getSelectionModel().getSelectedIndex(); i++) {
+    boolean productSelected = produceListView.getSelectionModel().isEmpty();
+    boolean employeeSelected = employeeListView.getSelectionModel().isEmpty();
 
-      ProductionRecord record = new ProductionRecord(item, i);
-      productionRun.add(record);
+    if (!productSelected && !employeeSelected) {
+      createRecordSuccessValidator(true);
+      for (int i = 0; i <= cmBoxQuantity.getSelectionModel().getSelectedIndex(); i++) {
 
+        ProductionRecord record = new ProductionRecord(item, i);
+        productionRun.add(record);
+
+      }
+      addToProductionDB(productionRun);
+      showProduction(productionRun);
+    } else {
+      createRecordSuccessValidator(false);
     }
-    addToProductionDB(productionRun);
-    showProduction(productionRun);
-
   }
 
   private void showProduction(ArrayList<ProductionRecord> records) {
     Widget itemSelected = produceListView.getSelectionModel().getSelectedItem();
+    Employee employee = employeeListView.getSelectionModel().getSelectedItem();
+    String name = employee.getName();
 
     for (ProductionRecord record : records) {
       ProductionRecord tempRecord = new ProductionRecord(record.getProductionNumber(),
           itemSelected.getName(), record.getSerialNumber(), record.getDateProduced());
-      taProductionLog.appendText(tempRecord.toString());
+      taProductionLog.appendText("Employee: " + name + " " + tempRecord.toString());
 
 
     }
@@ -367,37 +426,66 @@ public class Controller {
       String productManufacturer = txtfManufacturer.getText();
       String productName = txtfProductName.getText();
 
-      Widget product = new Widget(productName, productManufacturer, productType);
+      if (productName.isEmpty() && productManufacturer.isEmpty()) {
+        createLoginValidator(false);
+      } else if (productManufacturer.length() >= 3 && productName.length() >= 3) {
+        createLoginValidator(true);
+        Widget product = new Widget(productName, productManufacturer, productType);
 
-      //products.add(product);
-      productLine.add(product);
-      setupProductLineTable();
-      System.out.println("Products: " + products.toString());
+        //products.add(product);
+        productLine.add(product);
+        setupProductLineTable();
+        System.out.println("Products: " + products.toString());
 
-      // SQL statement used to insert textfield values into database
-      String sql =
-          "INSERT INTO Product(type, manufacturer, name) "
-              + "VALUES ( '" + productType + "', '" + product.getManufacturer() + "', '" + product
-              .getName() + "')";
+        // SQL statement used to insert textfield values into database
+        String sql =
+            "INSERT INTO Product(type, manufacturer, name) "
+                + "VALUES ( '" + productType + "', '" + product.getManufacturer() + "', '" + product
+                .getName() + "')";
 
-      // executes the previous steps
-      stmt.executeUpdate(sql);
-
-
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    // STEP 4: Clean-up environment
-    try {
-      if (conn == null) {
-        stmt.close();
-        conn.close();
+        // executes the previous steps
+        stmt.executeUpdate(sql);
+      } else {
+        createLoginValidator(false);
       }
+
+
     } catch (SQLException e) {
       e.printStackTrace();
     }
 
+  }
+
+  /**
+   * Show some validation on the screen so the user knows if add product worked.
+   *
+   * @param success represents if the add product function worked or not.
+   */
+  private void createLoginValidator(boolean success) {
+    if (success) {
+      addProductLabel.setText("Success!");
+    } else {
+      addProductLabel.setText("Please fill empty fields" + '\n'
+          + " or enter more than 3 letters!");
+    }
+    addProductLabel.setVisible(true);
+    productFadeOut.playFromStart();
+
+  }
+
+  /**
+   * Show some validation on the screen so the user knows if record production worked.
+   *
+   * @param success represents if the record production function worked or not.
+   */
+  private void createRecordSuccessValidator(boolean success) {
+    if (success) {
+      recordProductionLabel.setText("Success!");
+    } else {
+      recordProductionLabel.setText("Please select product and " + '\n' + "employee to record!");
+    }
+    recordProductionLabel.setVisible(true);
+    recordFadeOut.playFromStart();
 
   }
 

@@ -1,6 +1,6 @@
 package sample;
 
-public enum ItemType {
+enum ItemType {
   Audio("AU"),
   Visual("VI"), AudioMobile("AM"), VideoMobile("VM");
 

@@ -44,7 +44,7 @@ public class ProductionRecord {
     this.productionNumber = productionNumber;
     this.productID = productID;
     this.serialNumber = serialNumber;
-    this.dateProduced = dateProduced;
+    this.dateProduced = new Date();
   }
 
   /**
@@ -59,7 +59,7 @@ public class ProductionRecord {
     this.productionNumber = productionNumber;
     this.nameID = nameID;
     this.serialNumber = serialNumber;
-    this.dateProduced = dateProduced;
+    this.dateProduced = new Date();
   }
 
   public String getNameID() {
@@ -96,7 +96,7 @@ public class ProductionRecord {
   }
 
   public void setDateProduced(Date dateProduced) {
-    this.dateProduced = dateProduced;
+    this.dateProduced = new Date();
   }
 
   @Override
