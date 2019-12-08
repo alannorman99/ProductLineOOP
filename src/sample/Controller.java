@@ -1,18 +1,15 @@
 package sample;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -65,45 +62,6 @@ public class Controller {
   @FXML
   private TextArea taProductionLog;
 
-  @FXML
-  private TextArea txtAProductsDisplay;
-
-  /**
-   * labels quantity comboBox.
-   */
-  @FXML
-  private Label lblChooseQuantity;
-
-  /**
-   * Labels the ListView that displays all the products selected.
-   */
-  @FXML
-  private Label lblChooseProduct;
-
-  /**
-   * The individual Product Line Tab in the GUI.
-   */
-  @FXML
-  private Tab tabProductLine;
-
-  /**
-   * The individual Produce Tab in the GUI.
-   */
-  @FXML
-  private Tab tabProduce;
-
-  /**
-   * The individual Production Log Tab in the GUI.
-   */
-  @FXML
-  private Tab tabProductionLog;
-
-  /**
-   * Button that initiates producing a list of records based on the quantity selected.
-   */
-  @FXML
-  private Button btnRecordProduction;
-
   /**
    * Where the user enters the name of the product being entered.
    */
@@ -130,12 +88,6 @@ public class Controller {
 
   @FXML
   private TextField employeeNameField;
-
-  @FXML
-  private PasswordField employeePasswordField;
-
-  @FXML
-  private Button createEmployeeButton;
 
   @FXML
   private ListView<Employee> employeeListView;
@@ -171,7 +123,6 @@ public class Controller {
   private FadeTransition productFadeOut = new FadeTransition(Duration.millis(2000));
 
   private FadeTransition recordFadeOut = new FadeTransition(Duration.millis(2000));
-
 
 
   /**
@@ -296,9 +247,7 @@ public class Controller {
     for (ProductionRecord record : records) {
       try {
 
-
-
-       stmt = conn.createStatement();
+        stmt = conn.createStatement();
 
         String sql =
             "INSERT INTO ProductionRecord(production_num, product_id, serial_num, date_produced) "
