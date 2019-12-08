@@ -4,10 +4,6 @@
 
 ProductLineOOP
 
-
-## Demonstration
-
-
 ## Documentation
 [Link to Java-Docs](https://alannorman99.github.io/ProductLineOOP/)
 
@@ -52,13 +48,6 @@ Availability: https://sites.google.com/site/profvanselow/course/cop-3003/oop-pro
 
 ## Author
 Alan Norman
-
-
-## License
-
-
-## Acknowledgments
-
 
 ## History
 Week 1
