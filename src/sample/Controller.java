@@ -122,7 +122,7 @@ public class Controller {
 
   private FadeTransition productFadeOut = new FadeTransition(Duration.millis(2000));
 
-  private FadeTransition recordFadeOut = new FadeTransition(Duration.millis(2000));
+  private FadeTransition recordFadeOut = new FadeTransition(Duration.millis(3000));
 
 
   /**
